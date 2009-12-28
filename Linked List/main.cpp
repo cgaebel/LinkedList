@@ -58,14 +58,16 @@ LinkedList<string> GetContestants()
 
 	retVal.Pop();	// Remove the "fin" that was inserted last.
 
-	cout << "Done!\n";
+	cout << "Done!\n\n";
 
 	return retVal;
 }
 
 // Clears out the linked list one by one based on user input.
-void RemoveContestants(LinkedList<string>& contestants)
+string GetLastManStanding(LinkedList<string>& contestants)
 {
+	string lastRemoval;
+
 	while(!contestants.empty())
 	{
 		string toRemove;
@@ -74,10 +76,15 @@ void RemoveContestants(LinkedList<string>& contestants)
 		cin >> toRemove;
 
 		if(contestants.remove(toRemove))
+		{
+			lastRemoval = toRemove;
 			cout << "Contestant removed!\n";
+		}
 		else
 			cout << "Contestant not found.\n";
 	}
+
+	return lastRemoval;
 }
 
 // Spits out a linked list to cout. This would be so much nicer if I did it iteratively like so...
@@ -88,14 +95,19 @@ void RemoveContestants(LinkedList<string>& contestants)
 			cout << "Contestant: " << *i << "\n";
 	}
 */
-void DisplayList(LinkedList<string>::iterator toDisplay, const LinkedList<string>::iterator& end)
+void DisplayList(LinkedList<string>::iterator beginning, const LinkedList<string>::iterator& end)
 {
-	if(toDisplay == end)
+	if(beginning == end)
 		return;
 
-	cout << "Contestant: " << *toDisplay << "\n";
+	cout << "Contestant: " << *beginning << "\n";
 
-	DisplayList(++toDisplay, end);
+	DisplayList(++beginning, end);
+}
+
+void CongratulateWinner(string winner)
+{
+	cout << "\n" << winner << " wins!\n";
 }
 
 int main(int, wchar_t**)
@@ -103,9 +115,11 @@ int main(int, wchar_t**)
 	LinkedList<string> contestants = GetContestants();
 	LinkedList<string> backup(contestants);
 
-	RemoveContestants(contestants);
+	string winner = GetLastManStanding(contestants);
 
 	DisplayList(backup.begin(), backup.end());
+
+	CongratulateWinner(winner);
 
 	system("PAUSE");
 	return 0;
