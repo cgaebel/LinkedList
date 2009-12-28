@@ -38,46 +38,101 @@ using namespace std;
 		  and the information they contain is beyond useless. The stuff that
 		  matters should be figured out by looking at the code.
 		- Spend more time writing this than I spent on the assignment itself.
+
+	Test run:
+
+	Contestant's name? Alice
+	Contestant's name? Bob
+	Contestant's name? Carol
+	Contestant's name? Dave
+	Contestant's name? Edgar
+	Contestant's name? Fred
+	Contestant's name? Gary
+	Contestant's name? Harold
+	Contestant's name? fin
+	Done!
+	Who shall we remove? Harold
+	Contestant removed!
+	Who shall we remove? Gary
+	Contestant removed!
+	Who shall we remove? Fred
+	Contestant removed!
+	Who shall we remove? Edgar
+	Contestant removed!
+	Who shall we remove? Dave
+	Contestant removed!
+	Who shall we remove? Carol
+	Contestant removed!
+	Who shall we remove? Bob
+	Contestant removed!
+	Who shall we remove? Alice
+	Contestant removed!
+
+	Contestant: Harold
+	Contestant: Gary
+	Contestant: Fred
+	Contestant: Edgar
+	Contestant: Dave
+	Contestant: Carol
+	Contestant: Bob
+	Contestant: Alice
+
+	Alice wins!
+	Press any key to continue . . .
 */
 
 // Grabs a list of contestants from user input.
 LinkedList<string> GetContestants()
 {
-	LinkedList<string> retVal;
+	LinkedList<string> llsRetVal;
 
-	string lastInput;
+	string sLastInput;
 
 	do
 	{
 		cout << "Contestant's name? ";
-		cin >> lastInput;
+		cin >> sLastInput;
 
-		retVal.Push(lastInput);
+		llsRetVal.Push(sLastInput);
 	}
-	while(lastInput != "fin");
+	while(sLastInput != "fin");
 
-	retVal.Pop();	// Remove the "fin" that was inserted last.
+	llsRetVal.Pop();	// Remove the "fin" that was inserted last.
 
 	cout << "Done!\n";
 
-	return retVal;
+	// No shinanegans please.
+	if(llsRetVal.begin() == llsRetVal.end())
+		exit(-1);
+
+	return llsRetVal;
 }
 
 // Clears out the linked list one by one based on user input.
-void RemoveContestants(LinkedList<string>& contestants)
+// Returns the last contestant to be removed.
+string RemoveContestants(LinkedList<string>& llspContestants)
 {
-	while(!contestants.empty())
+	string sLastContestant;
+
+	while(!llspContestants.empty())
 	{
-		string toRemove;
+		string sToRemove;
 
 		cout << "Who shall we remove? ";
-		cin >> toRemove;
+		cin >> sToRemove;
 
-		if(contestants.remove(toRemove))
+		if(llspContestants.remove(sToRemove))
+		{
 			cout << "Contestant removed!\n";
+			sLastContestant = sToRemove;
+		}
 		else
 			cout << "Contestant not found.\n";
 	}
+
+	cout << "\n";
+
+	return sLastContestant;
 }
 
 // Spits out a linked list to cout. This would be so much nicer if I did it iteratively like so...
@@ -88,24 +143,31 @@ void RemoveContestants(LinkedList<string>& contestants)
 			cout << "Contestant: " << *i << "\n";
 	}
 */
-void DisplayList(LinkedList<string>::iterator toDisplay, const LinkedList<string>::iterator& end)
+void DisplayList(LinkedList<string>::iterator llsipBeginning, const LinkedList<string>::iterator& llsipEnd)
 {
-	if(toDisplay == end)
+	if(llsipBeginning == llsipEnd)
 		return;
 
-	cout << "Contestant: " << *toDisplay << "\n";
+	cout << "Contestant: " << *llsipBeginning << "\n";
 
-	DisplayList(++toDisplay, end);
+	DisplayList(++llsipBeginning, llsipEnd);
+}
+
+void CongratulateWinner(string spWinner)
+{
+	cout << "\n" << spWinner << " wins!\n";
 }
 
 int main(int, wchar_t**)
 {
-	LinkedList<string> contestants = GetContestants();
-	LinkedList<string> backup(contestants);
+	LinkedList<string> llsContestants = GetContestants();
+	LinkedList<string> llsBackup(llsContestants);
 
-	RemoveContestants(contestants);
+	string sLastContestant = RemoveContestants(llsContestants);
 
-	DisplayList(backup.begin(), backup.end());
+	DisplayList(llsBackup.begin(), llsBackup.end());
+
+	CongratulateWinner(sLastContestant);
 
 	system("PAUSE");
 	return 0;

@@ -21,44 +21,44 @@ class LinkedList
 private:
 	struct Node
 	{
-		_T data;
-		Node* next;
+		_T tData;
+		Node* pnNext;
 
 		Node() { }
 
-		Node(const _T& newData)
+		Node(const _T& tpNewData)
 		{
-			data = newData;
+			tData = tpNewData;
 		}
 	};
 
-	Node* sentinel;
+	Node* pnSentinel;
 
 public:
 	class iterator
 	{
 	private:
-		Node* me;
+		Node* pnChild;
 
 	public:
-		iterator(Node* node)
+		iterator(Node* npNode)
 		{
-			me = node;
+			pnChild = npNode;
 		}
 
-		bool operator==(const iterator& other) const
+		bool operator==(const iterator& ipOther) const
 		{
-			return me->next == other.me->next;
+			return pnChild->pnNext == ipOther.pnChild->pnNext;
 		}
 
-		bool operator!=(const iterator& other) const
+		bool operator!=(const iterator& ipOther) const
 		{
-			return !(*this == other);
+			return !(*this == ipOther);
 		}
 
 		iterator& operator++()
 		{
-			me = me->next;
+			pnChild = pnChild->pnNext;
 			return *this;
 		}
 
@@ -71,88 +71,88 @@ public:
 
 		_T operator*() const
 		{
-			return me->data;
+			return pnChild->tData;
 		}
 
 		_T* operator->() const
 		{
-			return &(me->data);
+			return &(pnChild->tData);
 		}
 	};
 
 private:
-	void Link(Node* left, Node* newValue, Node* right)
+	void Link(Node* npLeft, Node* npNewValue, Node* npRight)
 	{
-		left->next = newValue;
-		newValue->next = right;
+		npLeft->pnNext = npNewValue;
+		npNewValue->pnNext = npRight;
 	}
 
-	void RemoveFromParentList(Node* previousElement, Node* toRemove)
+	void RemoveFromParentList(Node* npPreviousElement, Node* npToRemove)
 	{
-		previousElement->next = toRemove->next;
-		delete toRemove;
+		npPreviousElement->pnNext = npToRemove->pnNext;
+		delete npToRemove;
 	}
 
 public:
 	LinkedList()
 	{
-		sentinel = new Node;
-		sentinel->next = sentinel;
+		pnSentinel = new Node;
+		pnSentinel->pnNext = pnSentinel;
 	}
 
-	LinkedList(LinkedList& other)
+	LinkedList(LinkedList& llpOther)
 	{
-		sentinel = new Node;
-		sentinel->next = sentinel;
+		pnSentinel = new Node;
+		pnSentinel->pnNext = pnSentinel;
 
-		for(iterator i = other.begin(); i != other.end(); ++i)
+		for(iterator i = llpOther.begin(); i != llpOther.end(); ++i)
 			Push(*i);
 	}
 
-	void Push(const _T& toAdd)
+	void Push(const _T& tpToAdd)
 	{
-		Link(sentinel, new Node(toAdd), sentinel->next);
+		Link(pnSentinel, new Node(tpToAdd), pnSentinel->pnNext);
 	}
 
 	_T Pop()
 	{
-		_T removed = sentinel->next->data;
-		RemoveFromParentList(sentinel, sentinel->next);
+		_T removed = pnSentinel->pnNext->tData;
+		RemoveFromParentList(pnSentinel, pnSentinel->pnNext);
 
 		return removed;
 	}
 
 	iterator begin()
 	{
-		return iterator(sentinel->next);
+		return iterator(pnSentinel->pnNext);
 	}
 
 	iterator end()
 	{
-		return iterator(sentinel);
+		return iterator(pnSentinel);
 	}
 
 	bool empty()
 	{
-		return sentinel == sentinel->next;
+		return pnSentinel == pnSentinel->pnNext;
 	}
 
 	// Return if the element was found.
-	bool remove(const _T& toRemove)
+	bool remove(const _T& tpToRemove)
 	{
 		// A little hack was used here to prevent deletion
 		// of an element we need the next pointer of.
 		// Instead of using "current" as an iterator, we
 		// use the element directly before it.
 		for(
-			Node* previous = sentinel;
-			previous->next != sentinel;
-			previous = previous->next
+			Node* previous = pnSentinel;
+			previous->pnNext != pnSentinel;
+			previous = previous->pnNext
 		)
 		{
-			Node* current = previous->next;
+			Node* current = previous->pnNext;
 
-			if(current->data == toRemove)
+			if(current->tData == tpToRemove)
 			{
 				RemoveFromParentList(previous, current);
 				return true;
@@ -167,6 +167,6 @@ public:
 		while(!empty())
 			Pop();
 
-		delete sentinel;
+		delete pnSentinel;
 	}
 };
